@@ -3,8 +3,8 @@ import { User } from 'lucide-react';
 // import LoginModal from './LoginModal';
 
 const Header = () => {
-  // const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('loggedInUser')));
-  // const [showLogin, setShowLogin] = useState(!user); 
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('loggedInUser')));
+  const [showLogin, setShowLogin] = useState(!user); 
 
   useEffect(() => {
     if (!user) setShowLogin(true);
