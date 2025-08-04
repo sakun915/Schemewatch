@@ -10,16 +10,16 @@ const useFirebaseSchools = () => {
   const [error, setError] = useState(null);
   const { user, loading: userLoading } = useCurrentUser();
 
-  const canAccessSchoolForm = user && (user.isAdmin || user.isResearchOfficer);
+  // const canAccessSchoolForm = user && (user.isAdmin || user.isResearchOfficer);
 
   const fetchSchools = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      if (!user || !canAccessSchoolForm) {
-        throw new Error('Unauthorized access');
-      }
+      // if (!user || !canAccessSchoolForm) {
+      //   throw new Error('Unauthorized access');
+      // }
 
       const querySnapshot = await getDocs(collection(db, 'School_Form'));
       const schoolsData = querySnapshot.docs.map(doc => ({
