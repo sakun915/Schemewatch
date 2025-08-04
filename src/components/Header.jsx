@@ -47,7 +47,7 @@ const Header = () => {
         </div>
       </header>
 
-{/*       {/* Login Modal - cannot be closed unless logged in */}
+{/*       
       {showLogin && (
         <LoginModal
           onLogin={handleLogin}
