@@ -3,12 +3,12 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth'; 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAU2aueQTEg-mq5TpQZ_fAJhHWq6UVoZxM",
-  authDomain: "fir-1-5dfab.firebaseapp.com",
-  projectId: "fir-1-5dfab",
-  storageBucket: "fir-1-5dfab.firebasestorage.app",
-  messagingSenderId: "748633520053",
-  appId: "1:748633520053:web:02cb87c1718860aa388bfc"
+ apiKey: "AIzaSyDDccXeXTfHZOn5LPPZ63fjVvAwJnkWUWo",
+  authDomain: "schemewatchtest.firebaseapp.com",
+  projectId: "schemewatchtest",
+  storageBucket: "schemewatchtest.firebasestorage.app",
+  messagingSenderId: "169541157876",
+  appId: "1:169541157876:web:2642120a28e2e6ee0c2fa1"
 };
 
 const app = initializeApp(firebaseConfig);
