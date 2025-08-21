@@ -1,37 +1,25 @@
 import React, { useState, useEffect } from "react";
 
-const SchoolLists = ({ visited, nonVisited, onSchoolClick }) => {
+const SchoolLists = ({ visited = [], nonVisited = [], selectedUdiseNo, setSelectedUdiseNo }) => {
   const [showAllVisited, setShowAllVisited] = useState(false);
   const [showAllNonVisited, setShowAllNonVisited] = useState(false);
-  const [selectedUdise, setSelectedUdise] = useState(null);
 
-  const displayedVisited = showAllVisited ? visited : visited.slice(0, 10);
-  const displayedNonVisited = showAllNonVisited ? nonVisited : nonVisited.slice(0, 10);
-
-  // ✅ Check if the selected school still exists
-  useEffect(() => {
-    const stillExists = visited.some(school => school["Udise No"] === selectedUdise);
-    if (!stillExists && selectedUdise) {
-      setSelectedUdise(null);
-      onSchoolClick(null); // Clear parent data
-    }
-  }, [visited, selectedUdise, onSchoolClick]);
+  // Safely handle undefined or null values
+  const displayedVisited = showAllVisited ? visited : (visited || []).slice(0, 10);
+  const displayedNonVisited = showAllNonVisited ? nonVisited : (nonVisited || []).slice(0, 10);
 
   const handleSchoolClick = (udise) => {
     // ✅ Deselect if clicked again
-    if (selectedUdise === udise) {
-      setSelectedUdise(null);
-      onSchoolClick(null);
+    if (selectedUdiseNo === udise) {
+      setSelectedUdiseNo(null);
     } else {
       // ✅ Only allow selecting from visited list
-      const exists = visited.some(school => school["Udise No"] === udise);
+      const exists = (visited || []).some(school => school.udiseNo === udise);
       if (exists) {
-        setSelectedUdise(udise);
-        onSchoolClick(udise);
+        setSelectedUdiseNo(udise);
       } else {
-        // Optional safety: deselect if non-visited clicked (not required in current UI)
-        setSelectedUdise(null);
-        onSchoolClick(null);
+        // Optional safety: deselect if non-visited clicked
+        setSelectedUdiseNo(null);
       }
     }
   };
@@ -50,9 +38,9 @@ const SchoolLists = ({ visited, nonVisited, onSchoolClick }) => {
         <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-green-50">
             <h3 className="text-lg font-semibold text-green-700">
-              ✅ Visited Schools ({visited.length})
+              ✅ Visited Schools ({(visited || []).length})
             </h3>
-            {visited.length > 10 && (
+            {(visited || []).length > 10 && (
               <button
                 onClick={() => setShowAllVisited(!showAllVisited)}
                 className="text-sm text-blue-600 hover:underline"
@@ -74,9 +62,9 @@ const SchoolLists = ({ visited, nonVisited, onSchoolClick }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
-                {displayedVisited.map((school, index) => {
-                  const udise = school["Udise No"];
-                  const isSelected = udise === selectedUdise;
+                {(displayedVisited || []).map((school, index) => {
+                  const udise = school.udiseNo;
+                  const isSelected = udise === selectedUdiseNo;
                   return (
                     <tr
                       key={index}
@@ -86,7 +74,7 @@ const SchoolLists = ({ visited, nonVisited, onSchoolClick }) => {
                       }`}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                        {school["School Name"] || "-"}
+                        {school.name || "-"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {udise || "-"}
@@ -94,7 +82,7 @@ const SchoolLists = ({ visited, nonVisited, onSchoolClick }) => {
                     </tr>
                   );
                 })}
-                {visited.length === 0 && (
+                {(visited || []).length === 0 && (
                   <tr>
                     <td colSpan="2" className="px-6 py-4 text-center text-sm text-gray-500">
                       No visited schools found
@@ -110,9 +98,9 @@ const SchoolLists = ({ visited, nonVisited, onSchoolClick }) => {
         <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-red-50">
             <h3 className="text-lg font-semibold text-red-700">
-              ❌ Non-Visited Schools ({nonVisited.length})
+              ❌ Non-Visited Schools ({(nonVisited || []).length})
             </h3>
-            {nonVisited.length > 10 && (
+            {(nonVisited || []).length > 10 && (
               <button
                 onClick={() => setShowAllNonVisited(!showAllNonVisited)}
                 className="text-sm text-blue-600 hover:underline"
@@ -134,17 +122,17 @@ const SchoolLists = ({ visited, nonVisited, onSchoolClick }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
-                {displayedNonVisited.map((school, index) => (
+                {(displayedNonVisited || []).map((school, index) => (
                   <tr key={index} className="hover:bg-red-50 transition">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                      {school["School Name"] || "-"}
+                      {school.name || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {school["Udise No"] || "-"}
+                      {school.udiseNo || "-"}
                     </td>
                   </tr>
                 ))}
-                {nonVisited.length === 0 && (
+                {(nonVisited || []).length === 0 && (
                   <tr>
                     <td colSpan="2" className="px-6 py-4 text-center text-sm text-gray-500">
                       No non-visited schools found
