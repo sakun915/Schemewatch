@@ -122,7 +122,7 @@ const AnalyticsPage = () => {
               el.style.boxShadow = 'none';
             });
             
-            // Add print-specific styles
+            // Add print-specific styles - REMOVED page-break-inside: avoid
             const style = clonedDoc.createElement('style');
             style.innerHTML = `
               body {
@@ -132,7 +132,6 @@ const AnalyticsPage = () => {
                 padding: 20px;
               }
               .pdf-section {
-                page-break-inside: avoid;
                 margin-bottom: 20px;
               }
               canvas {
@@ -212,7 +211,7 @@ const AnalyticsPage = () => {
       </div>
 
       <div ref={analyticsRef} className="space-y-8">
-        <div className="pdf-section">
+        <div>
           <FilterSection
             districts={allDistricts}
             selectedDistrict={selectedDistrict}
@@ -226,7 +225,7 @@ const AnalyticsPage = () => {
           />
         </div>
 
-        <div className="pdf-section">
+        <div>
           <SummaryCards
             total={filteredSchools.length}
             visited={visitedSchools.length}
@@ -234,14 +233,14 @@ const AnalyticsPage = () => {
           />
         </div>
 
-        <div className="pdf-section">
+        <div>
           <AnalyticsChart
             visitedCount={visitedSchools.length}
             nonVisitedCount={nonVisitedSchools.length}
           />
         </div>
 
-        <div className="pdf-section">
+        <div>
           <SchoolLists
             visited={visitedSchools}
             nonVisited={nonVisitedSchools}
@@ -251,12 +250,12 @@ const AnalyticsPage = () => {
         </div>
 
         {selectedUdiseNo && (
-          <div className="pdf-section">
+          <div>
             <SchoolAnalyticsCharts udiseNo={selectedUdiseNo} />
           </div>
         )}
 
-        <div className="pdf-section border-t pt-6 mt-6 space-y-6">
+        <div className="border-t pt-6 mt-6 space-y-6">
           <h2 className="text-2xl font-bold text-green-600 mb-2">
             Overall Analytics
           </h2>
@@ -274,7 +273,7 @@ const AnalyticsPage = () => {
         </div>
       </div>
 
-      {/* Add print styles */}
+      {/* Add print styles - REMOVED page-break-inside: avoid */}
       <style>
         {`
           @media print {
@@ -292,10 +291,6 @@ const AnalyticsPage = () => {
             
             button {
               display: none !important;
-            }
-            
-            .pdf-section {
-              page-break-inside: avoid;
             }
             
             canvas {
