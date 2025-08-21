@@ -5,6 +5,24 @@
     <link rel="icon" type="image/jpeg" href="/logo.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scheme watch</title>
+     <style>
+      /* Color overrides for html2canvas compatibility */
+      .bg-gray-50 { background-color: #f9fafb !important; }
+      .text-gray-600 { color: #4b5563 !important; }
+      .text-red-600 { color: #dc2626 !important; }
+      .bg-green-600 { background-color: #16a34a !important; }
+      .hover\:bg-green-700:hover { background-color: #15803d !important; }
+      .text-green-600 { color: #16a34a !important; }
+
+      /* Print-specific styles */
+      @media print {
+        .print\\:hidden { display: none; }
+        .print\\:bg-white { background-color: white; }
+        .print\\:p-4 { padding: 1rem; }
+        .break-after-page { break-after: page; }
+        .print\\:mb-4 { margin-bottom: 1rem; }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
