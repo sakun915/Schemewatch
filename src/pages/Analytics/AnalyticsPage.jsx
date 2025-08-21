@@ -22,7 +22,6 @@ import SchoolAnalyticsCharts from "./components/SchoolAnalyticsCharts";
 import { db } from "../../firebase/firebase-config";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 
-
 const AnalyticsPage = () => {
   const { loading, error: firebaseError } = useFirebaseSchools();
   const [schoolData, setSchoolData] = useState([]);
@@ -35,6 +34,7 @@ const AnalyticsPage = () => {
   const parentData = useParentFormData();
   const [selectedUdiseNo, setSelectedUdiseNo] = useState(null);
   const analyticsRef = useRef(null);
+  const [generatingPDF, setGeneratingPDF] = useState(false);
 
   useEffect(() => {
     const fetchSchoolData = async () => {
@@ -93,9 +93,73 @@ const AnalyticsPage = () => {
     fetchSchoolData();
   }, []);
 
-  const handleDownloadPDF = () => {
-  window.print();
-};
+  const handleDownloadPDF = async () => {
+    setGeneratingPDF(true);
+    
+    try {
+      // Dynamically import html2pdf only when needed
+      const html2pdf = (await import('html2pdf.js')).default;
+      
+      const element = analyticsRef.current;
+      const opt = {
+        margin: 0.5,
+        filename: 'scheme-watch-analytics.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2, 
+          useCORS: true, 
+          logging: true,
+          backgroundColor: '#FFFFFF',
+          onclone: function(clonedDoc) {
+            // Hide interactive elements in the cloned document
+            const buttons = clonedDoc.querySelectorAll('button');
+            buttons.forEach(btn => btn.style.display = 'none');
+            
+            // Ensure all content is visible
+            const allElements = clonedDoc.querySelectorAll('*');
+            allElements.forEach(el => {
+              el.style.overflow = 'visible';
+              el.style.boxShadow = 'none';
+            });
+            
+            // Add print-specific styles
+            const style = clonedDoc.createElement('style');
+            style.innerHTML = `
+              body {
+                font-family: Arial, sans-serif;
+                background: white !important;
+                color: black !important;
+                padding: 20px;
+              }
+              .pdf-section {
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+              }
+              canvas {
+                max-width: 100% !important;
+                height: auto !important;
+              }
+              @page {
+                size: landscape;
+                margin: 0.5in;
+              }
+            `;
+            clonedDoc.head.appendChild(style);
+          }
+        },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+      };
+
+      // Generate and download PDF directly
+      await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      // Fallback to print dialog if html2pdf fails
+      window.print();
+    } finally {
+      setGeneratingPDF(false);
+    }
+  };
 
   if (loading) return <div className="text-center text-gray-600">Loading Firebase data...</div>;
   if (firebaseError) return <div className="text-center text-red-600">Error loading Firebase data: {firebaseError}</div>;
@@ -132,16 +196,18 @@ const AnalyticsPage = () => {
   const visitedSchools = filteredSchools.filter((s) => s.visited);
   const nonVisitedSchools = filteredSchools.filter((s) => !s.visited);
 
-
   return (
     <div className="p-6 space-y-8 bg-gray-100 min-h-screen font-sans">
      
       <div className="flex justify-end mb-4">
         <button
           onClick={handleDownloadPDF}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+          disabled={generatingPDF}
+          className={`px-4 py-2 bg-green-600 text-white rounded-lg transition-colors duration-200 ${
+            generatingPDF ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-700'
+          }`}
         >
-          Download Analytics as PDF
+          {generatingPDF ? 'Generating PDF...' : 'Download Analytics as PDF'}
         </button>
       </div>
 
@@ -207,6 +273,38 @@ const AnalyticsPage = () => {
           <BasicFacilitiesDonutChart />
         </div>
       </div>
+
+      {/* Add print styles */}
+      <style>
+        {`
+          @media print {
+            @page {
+              size: landscape;
+              margin: 0.5in;
+            }
+            
+            body {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+              background: white !important;
+              color: black !important;
+            }
+            
+            button {
+              display: none !important;
+            }
+            
+            .pdf-section {
+              page-break-inside: avoid;
+            }
+            
+            canvas {
+              max-width: 100% !important;
+              height: auto !important;
+            }
+          }
+        `}
+      </style>
     </div>
   );
 };
