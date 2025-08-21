@@ -21,8 +21,7 @@ import BasicFacilitiesDonutChart from "./components/AdditionalCharts/BasicFacili
 import SchoolAnalyticsCharts from "./components/SchoolAnalyticsCharts";
 import { db } from "../../firebase/firebase-config";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
+
 
 const AnalyticsPage = () => {
   const { loading, error: firebaseError } = useFirebaseSchools();
